@@ -51,7 +51,7 @@ fp = FontProperties(fname=font, size=50)
 import time, calendar
 import os
 
-
+self.token._session.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux ppc64le; rv:75.0) Gecko/20100101 Firefox/75.0'})
 
 def twintSearchKeyword(classification, keyword, limit, onlyLink):
     """
