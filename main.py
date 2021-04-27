@@ -66,7 +66,7 @@ def twintSearchKeyword(classification, keyword, limit, onlyLink):
     '''
     twint.output.tweets_list = []
     c = twint.Config()
-    c.Output = 'data2/'+keyword+'/'+keyword+".csv"
+    #c.Output = 'data2/'+keyword+'/'+keyword+".csv"
     c.Store_object = True
     #c.Format = 'twint search: '+classification+' - '+keyword+' - {username} - {id}'
     #c.Format = 'twint search: '+keyword+' - {username} - {id}'
@@ -2064,8 +2064,8 @@ def handle_message(event):
     msg_from = event.reply_token
     msg_text = event.message.text
     user_id = event.source.user_id
-    if 't/ ' in msg_text:
-        keyword = msg.text.replace("t/","")
+    if 't/' in msg_text:
+        keyword = msg_text("t/","")
         tweets = twintSearchKeyword(None, keyword, 3000, False)
         words = CountWord(tweets)
         file_name = DrawWordCloud(words,keyword+'に関連するワード')
