@@ -72,4 +72,3 @@ chromedriver-binary==86.0.4240.22.0
 webdriver-manager
 bs4
 wordcloud
-git+https://github.com/twintproject/twint.git@origin/master#egg=twint
