@@ -72,3 +72,4 @@ chromedriver-binary==86.0.4240.22.0
 webdriver-manager
 bs4
 wordcloud
+twint
