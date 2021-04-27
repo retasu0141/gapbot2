@@ -2065,7 +2065,7 @@ def handle_message(event):
     msg_text = event.message.text
     user_id = event.source.user_id
     if 't/' in msg_text:
-        keyword = msg_text("t/","")
+        keyword = msg_text.replace("t/","")
         tweets = twintSearchKeyword(None, keyword, 3000, False)
         words = CountWord(tweets)
         file_name = DrawWordCloud(words,keyword+'に関連するワード')
