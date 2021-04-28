@@ -86,3 +86,4 @@ fake-useragent
 googletransx
 tenacity
 tqdm
+pytwitterscraper
