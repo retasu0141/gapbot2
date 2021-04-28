@@ -24,7 +24,7 @@ itsdangerous==0.24
 Jinja2==2.10
 jmespath==0.9.3
 kiwisolver==1.0.1
-numpy==1.15.1
+numpy
 pyparsing
 python-dateutil
 pytz
