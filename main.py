@@ -2066,6 +2066,7 @@ def handle_message(event):
     msg_text = event.message.text
     user_id = event.source.user_id
     if 't/' in msg_text:
+        print('Twitter')
         keyword = msg_text.replace("t/","")
         tw = TwitterScraper()
         search = tw.searchkeywords(keyword)
@@ -2117,6 +2118,7 @@ def handle_message(event):
         #img.seek(0)
 
         #plot_url = base64.b64encode(img.getvalue()).decode()
+        print(s3_image_url)
         line_bot_api.reply_message(msg_from,ImageSendMessage(original_content_url = s3_image_url,preview_image_url = s3_image_url))
     if msg_text == '使い方':
         items = {'items': [{'type': 'action','action': {'type': 'message','label': '今日のトレンド','text': '今日のトレンド'}},{'type': 'action','action': {'type': 'message','label': '昨日のトレンド','text': '昨日のトレンド'}},{'type': 'action','action': {'type': 'message','label': 'トレンド','text': 'トレンド'}}]}
