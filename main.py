@@ -52,6 +52,22 @@ fp = FontProperties(fname=font, size=50)
 import time, calendar
 import os
 
+from tenacity import retry
+
+
+@retry
+def get_proxies():
+    url = 'https://free-proxy-list.net/'
+    response = requests.get(url)
+    parser = lxml.html.fromstring(response.text)
+    proxies = set()
+    for i in parser.xpath('//tbody/tr')[:30]:
+        if i.xpath('.//td[7][contains(text(),"yes")]'):
+            proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+            proxies.add(proxy)
+    proxy_pool = itertools.cycle(proxies)
+    tw = TwitterScraper(proxy_enable=True, proxy_http=next(proxy_pool))
+    return tw
 
 
 def twintSearchKeyword(classification, keyword, limit, onlyLink):
@@ -2068,7 +2084,7 @@ def handle_message(event):
     if 't/' in msg_text:
         print('Twitter')
         keyword = msg_text.replace("t/","")
-        tw = TwitterScraper()
+        tw = get_proxies()
         print(keyword)
         search = tw.searchkeywords(keyword)
         names = []
