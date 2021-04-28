@@ -8,7 +8,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, FlexSendMessage, TemplateSendMessage,ButtonsTemplate,URIAction,QuickReplyButton,QuickReply
+    MessageEvent, ImageSendMessage, TextMessage, TextSendMessage, FlexSendMessage, TemplateSendMessage,ButtonsTemplate,URIAction,QuickReplyButton,QuickReply
 )
 
 import time
@@ -2117,13 +2117,7 @@ def handle_message(event):
         #img.seek(0)
 
         #plot_url = base64.b64encode(img.getvalue()).decode()
-        line_bot_api.reply_message(
-        event.reply_token,
-        ImageSendMessage(
-            original_content_url = s3_image_url,
-            preview_image_url    = s3_image_url
-            )
-        )
+        line_bot_api.reply_message(msg_from,ImageSendMessage(original_content_url = s3_image_url,preview_image_url = s3_image_url))
     if msg_text == '使い方':
         items = {'items': [{'type': 'action','action': {'type': 'message','label': '今日のトレンド','text': '今日のトレンド'}},{'type': 'action','action': {'type': 'message','label': '昨日のトレンド','text': '昨日のトレンド'}},{'type': 'action','action': {'type': 'message','label': 'トレンド','text': 'トレンド'}}]}
         line_bot_api.reply_message(msg_from,TextSendMessage(text='[使い方]\n\n今日のトレンド一覧を見る場合は"今日のトレンド"\n昨日のトレンド一覧の場合は"昨日のトレンド"\nキーワードのトレンド情報を見たい場合はそのキーワードを送信してください',quick_reply=items))
