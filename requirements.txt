@@ -53,7 +53,6 @@ tenacity
 tqdm
 appdirs
 cssselect
-idna
 lxml
 parse
 pyee
@@ -62,7 +61,5 @@ pyquery
 requests
 requests-html
 soupsieve
-tqdm
-urllib3
 w3lib
 websockets
