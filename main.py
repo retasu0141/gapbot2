@@ -41,7 +41,8 @@ import urllib.request
 import numpy as np
 import boto3
 
-import twint
+#import twint
+from pytwitterscraper import TwitterScraper
 from janome.tokenizer import Tokenizer
 import collections
 from wordcloud import WordCloud
@@ -92,8 +93,8 @@ def twintSearchKeyword(classification, keyword, limit, onlyLink):
 
 
 
-def CountWord(tweets):
-    tweet_list = [tweet.tweet for tweet in tweets]
+def CountWord(tweet_list):
+    #tweet_list = [tweet.tweet for tweet in tweets]
     all_tweet = "\n".join(tweet_list)
 
     t = Tokenizer()
@@ -2066,8 +2067,35 @@ def handle_message(event):
     user_id = event.source.user_id
     if 't/' in msg_text:
         keyword = msg_text.replace("t/","")
-        tweets = twintSearchKeyword(None, keyword, 3000, False)
-        words = CountWord(tweets)
+        tw = TwitterScraper()
+        search = tw.searchkeywords(keyword)
+        names = []
+        for data in search.users:
+            #print(data['url'])
+            id_data = data['url'].replace("https://twitter.com/","")
+            #print(id_data)
+            names.append(id_data)
+
+        #print()
+
+        ids = []
+
+        for name in names:
+            profile = tw.get_profile(name=name)
+            ids.append(profile.__dict__['id'])
+
+        text_data =[]
+        for id in ids:
+            try:
+                print(id)
+                tweets = tw.get_tweets(id, count=500)
+            except:
+                pass
+            #rint(tweets.contents)
+
+            for data in tweets.contents:
+                text_data.append(data['text'])
+        words = CountWord(text_data)
         file_name = DrawWordCloud(words,keyword+'に関連するワード')
         s3_resource = boto3.resource('s3')
         s3_resource.Bucket(aws_s3_bucket).upload_file(file_name, file_name)
