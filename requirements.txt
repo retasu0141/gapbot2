@@ -63,3 +63,4 @@ requests-html
 soupsieve
 w3lib
 websockets
+importlib-resources
