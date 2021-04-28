@@ -2071,11 +2071,13 @@ def handle_message(event):
         tw = TwitterScraper()
         search = tw.searchkeywords(keyword)
         names = []
+        print('Twitter'+keyword)
         for data in search.users:
             #print(data['url'])
             id_data = data['url'].replace("https://twitter.com/","")
             #print(id_data)
             names.append(id_data)
+            print(data['url'])
 
         #print()
 
