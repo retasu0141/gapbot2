@@ -19,7 +19,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import psycopg2
 import random
 
-
+import re
 from pytrends.request import TrendReq  #グーグルトレンドの情報取得
 import pandas as pd  #データフレームで扱う
 import matplotlib
