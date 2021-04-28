@@ -64,3 +64,4 @@ soupsieve
 w3lib
 websockets
 importlib-resources
+pytwitterscraper
