@@ -85,3 +85,4 @@ geopy
 fake-useragent
 googletransx
 tenacity
+tqdm
