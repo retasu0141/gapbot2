@@ -2096,8 +2096,20 @@ def handle_message(event):
 
             for data in tweets.contents:
                 text_data.append(data['text'])
+        print(text_data)
         words = CountWord(text_data)
         file_name = DrawWordCloud(words,keyword+'に関連するワード')
+        main_image_path = keyword+'.png'
+        preview_image_path = keyword+'.png'
+
+        # 画像の送信
+        image_message = ImageSendMessage(
+            original_content_url=f"https://date-the-image.herokuapp.com/{main_image_path}",
+            preview_image_url=f"https://date-the-image.herokuapp.com/{preview_image_path}",
+        )
+
+        line_bot_api.reply_message(event.reply_token, image_message)
+        '''
         s3_resource = boto3.resource('s3')
         s3_resource.Bucket(aws_s3_bucket).upload_file(file_name, file_name)
         s3_client = boto3.client('s3')
@@ -2120,6 +2132,7 @@ def handle_message(event):
         #plot_url = base64.b64encode(img.getvalue()).decode()
         print(s3_image_url)
         line_bot_api.reply_message(msg_from,ImageSendMessage(original_content_url = s3_image_url,preview_image_url = s3_image_url))
+        '''
     if msg_text == '使い方':
         items = {'items': [{'type': 'action','action': {'type': 'message','label': '今日のトレンド','text': '今日のトレンド'}},{'type': 'action','action': {'type': 'message','label': '昨日のトレンド','text': '昨日のトレンド'}},{'type': 'action','action': {'type': 'message','label': 'トレンド','text': 'トレンド'}}]}
         line_bot_api.reply_message(msg_from,TextSendMessage(text='[使い方]\n\n今日のトレンド一覧を見る場合は"今日のトレンド"\n昨日のトレンド一覧の場合は"昨日のトレンド"\nキーワードのトレンド情報を見たい場合はそのキーワードを送信してください',quick_reply=items))
