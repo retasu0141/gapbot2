@@ -3,6 +3,30 @@ import time
 
 import requests
 import logging as logme
+import numpy as np
+import lxml.html
+import itertools
+import pandas as pd
+import datetime
+from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor
+import concurrent.futures
+from tenacity import retry
+
+
+
+
+def get_proxies():
+    url = 'https://free-proxy-list.net/'
+    response = requests.get(url)
+    parser = lxml.html.fromstring(response.text)
+    proxies = set()
+    for i in parser.xpath('//tbody/tr')[:30]:
+        if i.xpath('.//td[7][contains(text(),"yes")]'):
+            proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+            proxies.add(proxy)
+    return proxies
+
 
 
 class TokenExpiryException(Exception):
@@ -17,6 +41,7 @@ class RefreshTokenException(Exception):
 
 class Token:
     def __init__(self, config):
+        #self.proxies =
         self._session = requests.Session()
         self._session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0'})
         self.config = config
@@ -32,34 +57,44 @@ class Token:
         self._timeout = 10
         '''
         self.url = 'https://twitter.com'
-
+    @retry
     def _request(self):
         for attempt in range(self._retries + 1):
             # The request is newly prepared on each retry because of potential cookie updates.
             req = self._session.prepare_request(requests.Request('GET', self.url))
             logme.debug(f'Retrieving {req.url}')
-            try:
-                r = self._session.send(req, allow_redirects=True, timeout=self._timeout)
-            except requests.exceptions.RequestException as exc:
-                if attempt < self._retries:
-                    retrying = ', retrying'
-                    level = logme.WARNING
-                else:
-                    retrying = ''
-                    level = logme.ERROR
-                logme.log(level, f'Error retrieving {req.url}: {exc!r}{retrying}')
-            else:
-                success, msg = (True, None)
-                msg = f': {msg}' if msg else ''
-
-                if success:
-                    logme.debug(f'{req.url} retrieved successfully{msg}')
-                    return r
-            if attempt < self._retries:
-                # TODO : might wanna tweak this back-off timer
-                sleep_time = 2.0 * 2 ** attempt
-                logme.info(f'Waiting {sleep_time:.0f} seconds')
-                time.sleep(sleep_time)
+            proxies = get_proxies()
+            proxy_pool = itertools.cycle(proxies)
+#            try:
+            r = self._session.send(
+                        req,
+                        allow_redirects=True,
+                        timeout=self._timeout,
+                        proxies=next(proxy_pool),
+                        verify=False,
+                    )
+            return r
+                #r = self._session.send(req, allow_redirects=True, timeout=self._timeout)
+#            except requests.exceptions.RequestException as exc:
+#                if attempt < self._retries:
+#                    retrying = ', retrying'
+#                    level = logme.WARNING
+#                else:
+#                    retrying = ''
+#                    level = logme.ERROR
+#                logme.log(level, f'Error retrieving {req.url}: {exc!r}{retrying}')
+#            else:
+#                success, msg = (True, None)
+#                msg = f': {msg}' if msg else ''
+#
+#                if success:
+#                    logme.debug(f'{req.url} retrieved successfully{msg}')
+#                    return r
+#            if attempt < self._retries:
+#                # TODO : might wanna tweak this back-off timer
+#                sleep_time = 2.0 * 2 ** attempt
+#                logme.info(f'Waiting {sleep_time:.0f} seconds')
+#                time.sleep(sleep_time)
         else:
             msg = f'{self._retries + 1} requests to {self.url} failed, giving up.'
             logme.fatal(msg)
