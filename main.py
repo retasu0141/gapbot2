@@ -2069,6 +2069,7 @@ def handle_message(event):
         print('Twitter')
         keyword = msg_text.replace("t/","")
         tw = TwitterScraper()
+        print(keyword)
         search = tw.searchkeywords(keyword)
         names = []
         print('Twitter'+keyword)
